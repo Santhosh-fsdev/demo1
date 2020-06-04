@@ -3,12 +3,15 @@ package com.example.demo.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cloudinary.api.ApiResponse;
+import com.cloudinary.utils.ObjectUtils;
 import com.example.demo.Utils.Jwtutil;
 import com.example.demo.model.Data;
 
 import com.example.demo.model.Request;
 import com.example.demo.model.Response;
 import com.example.demo.repository.DataRepository;
+import com.example.demo.service.CloudinaryService;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,6 +23,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 // import org.springframework.web.bind.annotation.GetMapping;
+
+//Cloudinary credentials
+import com.cloudinary.*;
+import org.springframework.web.multipart.MultipartFile;
+
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -37,6 +45,12 @@ public class MainController {
 
     @Autowired
     private DataRepository repository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private Cloudinary cloudinary;
 
     @CrossOrigin
     @GetMapping("/todos")
@@ -94,6 +108,23 @@ public ResponseEntity<?> createAuthenticationToken(@RequestBody Request authenti
     return ResponseEntity.ok(new Response(jwt));
 }
 
+    @PostMapping("/upload")
+    public String uploadFile(@RequestParam("file") MultipartFile file) {
+        String url = cloudinaryService.uploadFile(file);
+        return "File uploaded successfully: File path :  " + url;
+    }
 
+    String api = "cloudinary://816142554865616:vBtzbHeA0VToBOiWgORyxQXYOjY@santhoshfsev";
+
+    @GetMapping("/getfiles")
+    public ApiResponse files() throws Exception {
+         ApiResponse result = cloudinary.search()
+                .execute();
+
+         System.out.println(result);
+
+         return result;
+
+    }
 
 }
