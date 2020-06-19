@@ -12,6 +12,7 @@ import java.util.ArrayList;
 @Service
 @Component
 public class UserService implements UserDetailsService {
+
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         return new User("santhosh", "pass", new ArrayList<>());

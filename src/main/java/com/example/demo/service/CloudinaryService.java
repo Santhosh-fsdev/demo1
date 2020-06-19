@@ -17,6 +17,7 @@ public class CloudinaryService {
     @Autowired
     private Cloudinary cloudinaryConfig;
 
+    //uploads file and returns the url
     public String uploadFile(MultipartFile file) {
         try {
             File uploadedFile = convertMultiPartToFile(file);
@@ -28,7 +29,7 @@ public class CloudinaryService {
     }
 
 
-
+//converting the file
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
         File convFile = new File(file.getOriginalFilename());
         FileOutputStream fos = new FileOutputStream(convFile);

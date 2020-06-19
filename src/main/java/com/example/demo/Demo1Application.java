@@ -7,6 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import com.example.demo.config.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,11 +18,11 @@ public class Demo1Application {
 //	@Autowired
 //	private Environment env;
 
-	private  String cloudName = "santhoshfsev";
+	private  String cloudName = "cloud_name";
 
-	private  String apiKey = "816142554865616";
+	private  String apiKey = "api_key";
 
-	private  String apiSecret = "vBtzbHeA0VToBOiWgORyxQXYOjY";
+	private  String apiSecret = "api_secret";
 
 
 	public static void main(String[] args) {
@@ -30,6 +31,7 @@ public class Demo1Application {
 
 	}
 
+	//creating cloudinary connection as a bean
 	@Bean
 	public Cloudinary cloudinaryConfig() {
 

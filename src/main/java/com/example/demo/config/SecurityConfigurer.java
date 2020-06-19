@@ -16,9 +16,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @EnableWebSecurity
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
+
+
+    //return an inmemory user ->service -> userService
     @Autowired
     private UserService userService;
 
+    //pre filter for authenticating the request by parsing jwt ->filter ->JwTRequestFilter
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
@@ -29,11 +33,15 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeRequests().antMatchers("/authenticate","/deleteTodo/{id}","/getfiles","/upload","/save").permitAll().
-                anyRequest().authenticated().and().
+        http.
+                //disabling csrf
+                csrf().disable()
+                .authorizeRequests().antMatchers("/get").permitAll()
+                .anyRequest().authenticated().and().
                 exceptionHandling().and().sessionManagement()
+                //enabling stateless session management
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        //filter in action
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
     }
@@ -44,6 +52,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    //Password encoder ( no encrypting is done)
     @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();

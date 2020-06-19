@@ -13,6 +13,8 @@ import java.util.function.Function;
 
 @Component
 public class Jwtutil {
+
+    //secret key to sign the token
     private String SECRET_KEY = "santhowwhdqkhrvqjhe423525m135h";
 
     public String extractUsername(String token) {
@@ -27,6 +29,7 @@ public class Jwtutil {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+    //extract all values from the tooken
     private Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }

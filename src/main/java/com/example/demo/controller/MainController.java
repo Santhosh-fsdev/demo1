@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import com.example.demo.model.Response;
 import com.example.demo.repository.DataRepository;
 import com.example.demo.service.CloudinaryService;
 import com.example.demo.service.UserService;
+import org.apache.http.client.methods.RequestBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
@@ -29,30 +31,35 @@ import com.cloudinary.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin //enables cors requests
 @RestController
 public class MainController {
 
+    //Bean created in config -> SecurityConfigurer
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    //for performing jwt operations Utils -> JwtUtil
     @Autowired
     private Jwtutil jwtutil;
 
+    //returns and inmemory user service -> UserService
     @Autowired
     private UserService userService;
 
-
+    //which performs the db operations repository ->DataRepository
     @Autowired
     private DataRepository repository;
 
+    //Performs Cloudinary Service
     @Autowired
     private CloudinaryService cloudinaryService;
 
     @Autowired
     private Cloudinary cloudinary;
 
-    @CrossOrigin
+
+
     @GetMapping("/todos")
     public List<Data> data(){
         System.out.println("get method");
@@ -68,12 +75,7 @@ public class MainController {
 
     }
     
-     @GetMapping("all")
-         public List<Data> getAllUsers() {
-             System.out.println("Get Mapping");
-             repository.save(new Data("kishore",true));
-             return repository.findAll();
-     }
+
 
      @DeleteMapping("/deleteTodo/{id}")
         public String  deleteAll(@PathVariable (value="id")String id) {
@@ -87,9 +89,11 @@ public class MainController {
 //          data3 = repository.findById(id);
 //
 //    }
+
 @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
 public ResponseEntity<?> createAuthenticationToken(@RequestBody Request authenticationRequest) throws Exception {
 
+        //checking user credentials
     try {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
@@ -99,25 +103,31 @@ public ResponseEntity<?> createAuthenticationToken(@RequestBody Request authenti
         throw new Exception("Incorrect username or password", e);
     }
 
-
+    //calling user details services which returns user detail
     final UserDetails userDetails = userService
             .loadUserByUsername(authenticationRequest.getUsername());
 
+    //generating token -> jwtutil
     final String jwt = jwtutil.generateToken(userDetails);
 
+    //setting response with token if authentication is true
     return ResponseEntity.ok(new Response(jwt));
 }
 
+
     @PostMapping("/upload")
     public String uploadFile(@RequestParam("file") MultipartFile file) {
+        //calling the cloudinary service to upload files
         String url = cloudinaryService.uploadFile(file);
         return "File uploaded successfully: File path :  " + url;
     }
 
-    String api = "cloudinary://816142554865616:vBtzbHeA0VToBOiWgORyxQXYOjY@santhoshfsev";
+    String api = "api_key";
 
     @GetMapping("/getfiles")
     public ApiResponse files() throws Exception {
+
+        //it returns all the url of the assests in my storage
          ApiResponse result = cloudinary.search()
                 .execute();
 
